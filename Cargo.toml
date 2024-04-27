@@ -1,7 +1,7 @@
 [package]
 name = "database-build-a-simple-database"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 rust-version = "1.77.2"
 description= """
 I am following this tutorial here: https://cstack.github.io/db_tutorial/

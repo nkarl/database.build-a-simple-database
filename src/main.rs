@@ -15,7 +15,7 @@ fn main() {
 
 fn prompt() -> io::Result<String> {
     print_prompt().ok();
-    let s = format!("in : {}", get_prompt().ok().unwrap());
+    let s = format!("echo {}", get_prompt().ok().unwrap());
     print_string(&s).ok();
     Ok(s)
 }
