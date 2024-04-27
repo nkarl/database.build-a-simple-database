@@ -1,0 +1,15 @@
+[package]
+name = "database-build-a-simple-database"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.77.2"
+description= """
+I am following this tutorial here: https://cstack.github.io/db_tutorial/
+This project is done in Rust instead of C, so there will be differences
+in design choices.
+"""
+repository= "https://github.com/nkarl/database-build-a-simple-database"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
