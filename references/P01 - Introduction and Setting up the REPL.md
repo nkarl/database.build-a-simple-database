@@ -6,5 +6,7 @@
     - [x] read in *any* user input as a line
     - [x] write the line to the `stdout`
     - [x] loop back
-- [x] Use `String` in place of `InputBuffer`
-- [ ] Add debug case to the REPL where the io::Stdin is optional
+- [x] Use `String` in place of `InputBuffer`s
+- [x] Add commandline argument parsing using the crate `clap::Parser`
+- [x] Add the debug code path
+- [x] Add initial support for an exit command to `quit;` or `exit;`
