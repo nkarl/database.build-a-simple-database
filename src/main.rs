@@ -5,8 +5,6 @@ use clap::Parser;
 
 #[derive(Parser, Debug)]
 struct Args {
-    //name: String,
-    //count: u8,
     #[clap(long, short, action)]
     debug: bool,
 }
@@ -24,14 +22,33 @@ fn main() {
 
 fn main_body(args: Args) -> io::Result<()> {
     let _debug: bool = args.debug;
+    let mut cmd = String::new();
     let _ = match _debug {
         true => prompt(_debug),
-        false => loop {
-            // program loop
-            let s = prompt(_debug).unwrap();
-        },
+        false => {
+            loop {
+                cmd = prompt(_debug).unwrap();
+                cmd = strip_newline_cr(&cmd); // TODO: this should be part of the Parser
+                match &cmd[..] {
+                    /*
+                     * TODO: implment command lookup table
+                     */
+                    ".quit;" => break,
+                    _ => continue,
+                }
+            }
+            Ok(cmd)
+        }
     };
     Ok(())
+}
+
+fn strip_newline_cr(s: &str) -> String {
+    let (carriage_return, newline) = ("\r\n", "\n");
+    s.strip_suffix(carriage_return)
+        .or(s.strip_suffix(newline))
+        .unwrap_or(s)
+        .to_string()
 }
 
 fn prompt(_debug: bool) -> io::Result<String> {
@@ -62,4 +79,14 @@ fn write_string(s: &str) -> io::Result<()> {
 }
 
 #[cfg(test)]
-mod tests {}
+mod tests {
+    use crate::strip_newline_cr;
+
+    #[test]
+    fn it_strips_newline_cr_from_strings() {
+        assert_eq!(strip_newline_cr(".quit;\r\n\r\n"), ".quit;\r\n");
+        assert_eq!(strip_newline_cr(".quit;\r\n"), ".quit;");
+        assert_eq!(strip_newline_cr(".quit;\n"), ".quit;");
+        assert_eq!(strip_newline_cr(".quit;"), ".quit;");
+    }
+}
