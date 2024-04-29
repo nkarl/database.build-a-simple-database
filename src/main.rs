@@ -23,23 +23,20 @@ fn main() {
 fn main_body(args: Args) -> io::Result<()> {
     let _debug: bool = args.debug;
     let mut cmd = String::new();
-    let _ = match _debug {
-        true => prompt(_debug),
-        false => {
-            loop {
-                cmd = prompt(_debug).unwrap();
-                cmd = strip_newline_cr(&cmd); // TODO: this should be part of the Parser
-                match &cmd[..] {
-                    /*
-                     * TODO: implment command lookup table
-                     */
-                    ".quit;" => break,
-                    _ => continue,
-                }
-            }
-            Ok(cmd)
+    'main_program: loop {
+        cmd = prompt(_debug).unwrap();
+        cmd = strip_newline_cr(&cmd); // TODO: this should be part of the Parser
+        match _debug {
+            false => match &cmd[..] {
+                /*
+                 * TODO: implment command lookup table
+                 */
+                ".quit;" | ".exit;" => break 'main_program,
+                _ => continue,
+            },
+            true => break,
         }
-    };
+    }
     Ok(())
 }
 
