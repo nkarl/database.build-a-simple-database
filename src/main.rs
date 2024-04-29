@@ -1,6 +1,16 @@
 use std::io;
 use std::io::Write;
 
+use clap::Parser;
+
+#[derive(Parser, Debug)]
+struct Args {
+    //name: String,
+    //count: u8,
+    #[clap(long, short, action)]
+    debug: bool,
+}
+
 struct InputBuffer {
     buffer: *mut char,
     buffer_length: u32,
@@ -8,47 +18,48 @@ struct InputBuffer {
 }
 
 fn main() {
-    loop {
-        let cmd = prompt();
-    }
+    let args = Args::parse();
+    let _ = main_body(args);
 }
 
-fn prompt() -> io::Result<String> {
-    print_prompt().ok();
-    let s = format!("echo {}", get_prompt().ok().unwrap());
-    print_string(&s).ok();
-    Ok(s)
-}
-
-fn get_prompt() -> io::Result<String> {
-    let mut buf = String::new();
-    io::stdin().read_line(&mut buf)?;
-    Ok(buf)
-}
-
-fn print_prompt() -> io::Result<()> {
-    print_string(&String::from("db > "))
-}
-
-fn print_string(s: &String) -> io::Result<()> {
-    let out = io::stdout().lock();
-    let mut buf = io::BufWriter::new(out);
-    buf.write(s.as_bytes())?;
-    buf.flush()?;
+fn main_body(args: Args) -> io::Result<()> {
+    let _debug: bool = args.debug;
+    let _ = match _debug {
+        true => prompt(_debug),
+        false => loop {
+            // program loop
+            let s = prompt(_debug).unwrap();
+        },
+    };
     Ok(())
 }
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_asserts_sizeof_byte_char_is_same_as_u8() {
-        let s = String::from("hello");
-        assert_eq!(5 /* bytes */, s.len() * std::mem::size_of::<u8>());
-    }
+fn prompt(_debug: bool) -> io::Result<String> {
+    let _ = write_string("db > ");
+    let cmd = get_cmd(_debug);
+    let _ = write_string(&cmd);
+    Ok(cmd)
+}
 
-    #[test]
-    fn it_asserts_sizeof_char_is_u32() {
-        let s = vec!['h', 'e', 'l', 'l', 'o'];
-        assert_eq!(5 /* bytes */, s.len() * std::mem::size_of::<u32>());
+fn get_cmd(_debug: bool) -> String {
+    match _debug {
+        true => String::from("debug command\n"),
+        false => prompt_user().unwrap(),
     }
 }
+
+fn prompt_user() -> io::Result<String> {
+    let mut s = String::new();
+    io::stdin().read_line(&mut s)?;
+    Ok(s)
+}
+
+fn write_string(s: &str) -> io::Result<()> {
+    let out = io::stdout().lock();
+    let mut buf = io::BufWriter::new(out);
+    buf.write(s.as_bytes())?;
+    buf.flush()
+}
+
+#[cfg(test)]
+mod tests {}
